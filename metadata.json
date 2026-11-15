@@ -1,0 +1,10 @@
+{
+  "name": "Remix Trust Auto",
+  "description": "Проверенные авто под ключ в Кыргызстан из Южной Кореи, США, Китая, Японии, Дубая, Грузии и Европы. Каталог, аукционы и калькулятор растаможки.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
