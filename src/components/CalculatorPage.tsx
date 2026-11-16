@@ -50,7 +50,7 @@ export const CalculatorPage: React.FC<CalculatorPageProps> = ({
 
     const auctionAndInspection = AUCTION_FEE_RATE[country];
     const logistics = LOGISTICS_BASE[country];
-    const trustAutoService = 650; // Подбор, видео-отчёт, оформление СБКТС и ЭПТС
+    const trustAutoService = 200; // Фиксированная услуга компании
 
     // Ориентировочная формула расчёта таможенной очистки КР
     let customsDuty = 0;
@@ -84,20 +84,20 @@ export const CalculatorPage: React.FC<CalculatorPageProps> = ({
   }, [country, priceUsd, year, fuel, engineCc]);
 
   const breakdownItems = [
-    { label: 'Стоимость авто на площадке', value: calculation.safePrice, color: 'bg-slate-400' },
+    { label: `Цена на площадке (${country})`, value: calculation.safePrice, color: 'bg-slate-400' },
     {
       label: 'Аукционный сбор и инспекция',
       value: calculation.auctionAndInspection,
       color: 'bg-sky-500',
     },
     {
-      label: `Доставка до Бишкека (${calculation.transit})`,
+      label: `Доставка в Кыргызстан (${calculation.transit})`,
       value: calculation.logistics,
       color: 'bg-indigo-500',
     },
-    { label: 'Таможенная очистка в КР', value: calculation.customsDuty, color: 'bg-[#0058cd] dark:bg-[#8fff00]' },
+    { label: 'Растаможка', value: calculation.customsDuty, color: 'bg-[#0058cd] dark:bg-[#8fff00]' },
     {
-      label: 'Услуги Trust Auto и ЭПТС / СБКТС',
+      label: 'Услуга',
       value: calculation.trustAutoService,
       color: 'bg-blue-400 dark:bg-emerald-500',
     },
