@@ -228,7 +228,7 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
   const servicePct = Math.max(1, 100 - sourcePct - logisticsPct - customsPct);
 
   return (
-    <main className="min-h-screen bg-[#F6F7F9] py-4 sm:py-7 dark:bg-[#000000]">
+    <main className="min-h-screen bg-[#F6F7F9] pt-4 pb-24 sm:pt-7 lg:pb-7 dark:bg-[#000000]">
       <div className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
         {/* Top Breadcrumb + Utility Actions */}
         <div className="flex flex-wrap items-center justify-between gap-2.5">
@@ -520,33 +520,23 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2">
-                <button
-                  type="button"
-                  onClick={() => onOrderCar(car)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#0058cd] px-4 py-3 text-sm font-bold text-white hover:bg-[#0046a3] dark:bg-[#8fff00] dark:text-slate-950 dark:hover:bg-[#7ae000]"
-                >
-                  <Send className="h-4 w-4" />
-                  <span>Заказать авто</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    onOpenInCalculator({
-                      country: car.country,
-                      priceUsd: car.sourcePriceUsd,
-                      year: car.year,
-                      engineCc: car.engineCc || 2000,
-                      fuel: car.fuel,
-                      title: `${car.brand} ${car.model} (${car.year})`,
-                    })
-                  }
-                  className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-white/10 dark:text-slate-200"
-                >
-                  <Calculator className="h-4 w-4" />
-                  <span>Калькулятор</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  onOpenInCalculator({
+                    country: car.country,
+                    priceUsd: car.sourcePriceUsd,
+                    year: car.year,
+                    engineCc: car.engineCc || 2000,
+                    fuel: car.fuel,
+                    title: `${car.brand} ${car.model} (${car.year})`,
+                  })
+                }
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-[#0058cd] hover:text-[#0058cd] dark:border-white/10 dark:text-slate-200 dark:hover:border-[#8fff00] dark:hover:text-[#8fff00]"
+              >
+                <Calculator className="h-4 w-4" />
+                <span>Калькулятор растаможки</span>
+              </button>
             </div>
 
             {/* Section 1: Specifications Table (Auto-Desk dotted key-value rows) */}
@@ -1249,6 +1239,27 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
           </div>
         </div>
       )}
+      {/* Fixed Mobile Bottom Action Bar */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 border-t border-slate-200 bg-white/95 px-3 py-2.5 backdrop-blur-md shadow-[0_-6px_24px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-[#0D0D0D]/95 dark:shadow-[0_-6px_24px_rgba(0,0,0,0.5)]">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="font-mono text-base font-extrabold tabular-nums text-slate-900 dark:text-white leading-tight">
+              ${displayPriceUsd.toLocaleString('ru-RU')}
+            </div>
+            <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate">
+              под ключ в КР
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => onOrderCar(car)}
+            className="flex flex-1 max-w-[230px] items-center justify-center gap-2 rounded-xl bg-[#0058cd] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#0046a3] active:scale-[0.99] dark:bg-[#8fff00] dark:text-slate-950 dark:hover:bg-[#7ae000]"
+          >
+            <Send className="h-4 w-4 shrink-0" />
+            <span>Заказать авто</span>
+          </button>
+        </div>
+      </div>
     </main>
   );
 };
