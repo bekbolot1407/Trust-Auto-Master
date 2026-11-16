@@ -74,6 +74,15 @@ export interface CarListing {
   isAuction: boolean;
   auctionEndsIn?: string;
   upcomingAuction?: string;
+  auctionStartPriceUsd?: number;
+  auctionEstimatedWinPriceUsd?: number | null;
+  insuranceReport: {
+    ownerChanges: number;
+    ownDamageCount: number;
+    ownDamageAmountUsd: number;
+    otherDamageCount: number;
+    otherDamageAmountUsd: number;
+  };
 }
 
 export interface FilterState {

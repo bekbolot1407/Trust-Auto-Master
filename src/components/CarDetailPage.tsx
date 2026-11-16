@@ -115,6 +115,21 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
   const marketAvgUsd = Math.round(car.priceUsd * 1.18);
   const savingsUsd = marketAvgUsd - car.priceUsd;
 
+  const auctionStartPriceUsd =
+    car.auctionStartPriceUsd ?? Math.max(4500, Math.round((car.sourcePriceUsd * 0.84) / 100) * 100);
+  const auctionEstimatedWinPriceLabel =
+    car.auctionEstimatedWinPriceUsd != null
+      ? `$${car.auctionEstimatedWinPriceUsd.toLocaleString('ru-RU')}`
+      : 'По запросу';
+
+  const insurance = car.insuranceReport || {
+    ownerChanges: 1,
+    ownDamageCount: 0,
+    ownDamageAmountUsd: 0,
+    otherDamageCount: 0,
+    otherDamageAmountUsd: 0,
+  };
+
   const engineLabel =
     car.engineCc > 0
       ? `${(car.engineCc / 1000).toFixed(1)} л (${car.engineCc} см³)`
@@ -350,6 +365,7 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
               {[
                 { id: 'sec-specs', label: 'Характеристики' },
                 { id: 'sec-inspection', label: 'Кузов и ЛКП' },
+                { id: 'sec-insurance', label: 'Страховые случаи' },
                 { id: 'sec-options', label: 'Комплектация' },
                 { id: 'sec-price', label: 'Расчёт цены' },
               ].map((tab) => (
@@ -518,6 +534,27 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
                     </span>
                   </div>
                 </div>
+
+                {car.isAuction && (
+                  <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 dark:border-white/10">
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 dark:border-white/10 dark:bg-[#0D0D0D]">
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                        Начальная ставка
+                      </div>
+                      <div className="mt-0.5 font-mono text-xs font-extrabold tabular-nums text-slate-900 dark:text-white">
+                        ${auctionStartPriceUsd.toLocaleString('ru-RU')}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-[#0058cd]/30 bg-[#0058cd]/5 px-2.5 py-2 dark:border-[#8fff00]/30 dark:bg-[#8fff00]/5">
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                        Примерная цена выигрыша
+                      </div>
+                      <div className="mt-0.5 font-mono text-xs font-extrabold tabular-nums text-[#0058cd] dark:text-[#8fff00]">
+                        {auctionEstimatedWinPriceLabel}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button
@@ -821,6 +858,65 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
                     ))}
                   </div>
 
+                  {/* Insurance Claims Report (for all listings) */}
+                  <div
+                    id="sec-insurance"
+                    className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 dark:border-white/10 dark:bg-[#0D0D0D]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                        Отчёт о страховых случаях
+                      </h3>
+                      <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        База CarHistory / Страховая история
+                      </span>
+                    </div>
+                    <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      <div className="rounded-lg border border-slate-200 bg-white p-2.5 dark:border-white/10 dark:bg-[#141414]">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Смены владельца
+                        </div>
+                        <div className="mt-1 font-mono text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                          {insurance.ownerChanges === 0
+                            ? '0 (1-й владелец)'
+                            : `${insurance.ownerChanges} раз(а)`}
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-slate-200 bg-white p-2.5 dark:border-white/10 dark:bg-[#141414]">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Ущерб своему авто
+                        </div>
+                        <div
+                          className={`mt-1 font-mono text-xs sm:text-sm font-bold ${
+                            insurance.ownDamageCount === 0
+                              ? 'text-[#0058cd] dark:text-emerald-400'
+                              : 'text-amber-600 dark:text-amber-400'
+                          }`}
+                        >
+                          {insurance.ownDamageCount === 0
+                            ? '0 случаев ($0)'
+                            : `${insurance.ownDamageCount} случ. ($${insurance.ownDamageAmountUsd.toLocaleString('ru-RU')})`}
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-slate-200 bg-white p-2.5 dark:border-white/10 dark:bg-[#141414]">
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Ущерб чужому авто
+                        </div>
+                        <div
+                          className={`mt-1 font-mono text-xs sm:text-sm font-bold ${
+                            insurance.otherDamageCount === 0
+                              ? 'text-[#0058cd] dark:text-emerald-400'
+                              : 'text-amber-600 dark:text-amber-400'
+                          }`}
+                        >
+                          {insurance.otherDamageCount === 0
+                            ? '0 случаев ($0)'
+                            : `${insurance.otherDamageCount} случ. ($${insurance.otherDamageAmountUsd.toLocaleString('ru-RU')})`}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 text-xs sm:text-sm dark:border-white/10 dark:bg-[#0D0D0D]">
                     {[
                       'Компьютерная диагностика двигателя и АКПП без активных ошибок',
@@ -940,6 +1036,26 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
               </div>
 
               <div className="space-y-2.5 text-xs sm:text-sm">
+                {car.isAuction && (
+                  <>
+                    <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-white/5">
+                      <span className="text-slate-600 dark:text-slate-300">
+                        Начальная ставка на аукционе:
+                      </span>
+                      <span className="font-mono font-semibold tabular-nums text-slate-900 dark:text-white">
+                        ${auctionStartPriceUsd.toLocaleString('ru-RU')}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-white/5">
+                      <span className="text-slate-600 dark:text-slate-300">
+                        Примерная цена выигрыша:
+                      </span>
+                      <span className="font-mono font-bold tabular-nums text-[#0058cd] dark:text-[#8fff00]">
+                        {auctionEstimatedWinPriceLabel}
+                      </span>
+                    </div>
+                  </>
+                )}
                 <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-white/5">
                   <span className="text-slate-600 dark:text-slate-300">
                     Цена на площадке ({car.country}):
@@ -1059,6 +1175,26 @@ export const CarDetailPage: React.FC<CarDetailPageProps> = ({
                     </span>
                   </div>
                 </div>
+                {car.isAuction && (
+                  <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-200 pt-3 dark:border-white/10">
+                    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 dark:border-white/10 dark:bg-[#141414]">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Начальная ставка
+                      </div>
+                      <div className="mt-0.5 font-mono text-sm font-extrabold tabular-nums text-slate-900 dark:text-white">
+                        ${auctionStartPriceUsd.toLocaleString('ru-RU')}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-[#0058cd]/30 bg-[#0058cd]/5 px-3 py-2 dark:border-[#8fff00]/30 dark:bg-[#8fff00]/5">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Примерная цена выигрыша
+                      </div>
+                      <div className="mt-0.5 font-mono text-sm font-extrabold tabular-nums text-[#0058cd] dark:text-[#8fff00]">
+                        {auctionEstimatedWinPriceLabel}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="mt-2.5 flex items-center justify-between border-t border-slate-200 pt-2 text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
                   <span>Средняя цена на рынке КР:</span>
                   <span className="font-mono line-through opacity-75">

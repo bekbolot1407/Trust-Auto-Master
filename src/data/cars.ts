@@ -566,6 +566,22 @@ function buildCatalog(): CarListing[] {
     const vinNum = String(100000 + i * 7919).slice(-6);
     const vinPrefix = tpl.brand.slice(0, 3).toUpperCase();
 
+    const auctionStartPriceUsd = isAuction
+      ? Math.max(4500, Math.round((sourcePriceUsd * 0.84) / 100) * 100)
+      : undefined;
+    const auctionEstimatedWinPriceUsd = isAuction
+      ? i % 3 === 0
+        ? null
+        : Math.round((sourcePriceUsd * (0.98 + r2 * 0.08)) / 100) * 100
+      : undefined;
+
+    const ownerChanges =
+      year >= 2024 ? (i % 2 === 0 ? 0 : 1) : year >= 2022 ? 1 : i % 3 === 0 ? 2 : 1;
+    const ownDamageCount = i % 7 === 0 ? 1 : 0;
+    const ownDamageAmountUsd = ownDamageCount > 0 ? 350 + (i % 5) * 140 : 0;
+    const otherDamageCount = i % 11 === 0 ? 1 : 0;
+    const otherDamageAmountUsd = otherDamageCount > 0 ? 280 + (i % 4) * 130 : 0;
+
     list.push({
       id: `TA-${1001 + i}`,
       brand: tpl.brand,
@@ -594,6 +610,15 @@ function buildCatalog(): CarListing[] {
       isAuction,
       auctionEndsIn: isAuction ? AUCTION_TIMERS[i % AUCTION_TIMERS.length] : undefined,
       upcomingAuction,
+      auctionStartPriceUsd,
+      auctionEstimatedWinPriceUsd,
+      insuranceReport: {
+        ownerChanges,
+        ownDamageCount,
+        ownDamageAmountUsd,
+        otherDamageCount,
+        otherDamageAmountUsd,
+      },
     });
   }
 
@@ -625,6 +650,13 @@ function buildCatalog(): CarListing[] {
       inspectionScore: 'Класс A · Заводской ЛКП',
       deliveryDays: '25–35 дней',
       isAuction: false,
+      insuranceReport: {
+        ownerChanges: 1,
+        ownDamageCount: 0,
+        ownDamageAmountUsd: 0,
+        otherDamageCount: 0,
+        otherDamageAmountUsd: 0,
+      },
     },
     {
       id: 'TA-HERO-2',
@@ -652,6 +684,13 @@ function buildCatalog(): CarListing[] {
       inspectionScore: 'Класс A · Заводской ЛКП',
       deliveryDays: '25–35 дней',
       isAuction: false,
+      insuranceReport: {
+        ownerChanges: 0,
+        ownDamageCount: 0,
+        ownDamageAmountUsd: 0,
+        otherDamageCount: 0,
+        otherDamageAmountUsd: 0,
+      },
     },
     {
       id: 'TA-HERO-3',
@@ -679,6 +718,13 @@ function buildCatalog(): CarListing[] {
       inspectionScore: 'Класс A · Проверен по 140 п.',
       deliveryDays: '25–35 дней',
       isAuction: false,
+      insuranceReport: {
+        ownerChanges: 1,
+        ownDamageCount: 0,
+        ownDamageAmountUsd: 0,
+        otherDamageCount: 0,
+        otherDamageAmountUsd: 0,
+      },
     },
     {
       id: 'TA-HERO-4',
@@ -706,6 +752,13 @@ function buildCatalog(): CarListing[] {
       inspectionScore: 'Класс A · Заводской ЛКП',
       deliveryDays: '25–35 дней',
       isAuction: false,
+      insuranceReport: {
+        ownerChanges: 1,
+        ownDamageCount: 0,
+        ownDamageAmountUsd: 0,
+        otherDamageCount: 0,
+        otherDamageAmountUsd: 0,
+      },
     },
     {
       id: 'TA-HERO-5',
@@ -733,6 +786,13 @@ function buildCatalog(): CarListing[] {
       inspectionScore: 'Класс A · Заводской ЛКП',
       deliveryDays: '25–35 дней',
       isAuction: false,
+      insuranceReport: {
+        ownerChanges: 0,
+        ownDamageCount: 0,
+        ownDamageAmountUsd: 0,
+        otherDamageCount: 0,
+        otherDamageAmountUsd: 0,
+      },
     },
   ];
 
