@@ -299,7 +299,7 @@ const TEMPLATES: ModelTemplate[] = [
   {
     brand: 'Hyundai',
     model: 'Palisade (LX3)',
-    trims: ['HEV 2.5T 4WD 7-местный Calligraphy', 'Prestige'],
+    trims: ['Calligraphy 7-мест', 'Prestige'],
     bodyType: 'Внедорожник',
     fuels: ['Гибрид', 'Бензин'],
     engineCc: 2497,

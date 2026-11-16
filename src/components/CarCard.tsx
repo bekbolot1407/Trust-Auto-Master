@@ -11,8 +11,6 @@ interface CarCardProps {
   viewMode?: 'grid' | 'list';
 }
 
-const KGS_RATE = 87.5;
-
 export const CarCard: React.FC<CarCardProps> = ({
   car,
   onSelect,
@@ -25,9 +23,11 @@ export const CarCard: React.FC<CarCardProps> = ({
   const touchStartX = useRef<number | null>(null);
 
   const formattedPriceUsd = car.priceUsd.toLocaleString('ru-RU');
-  const formattedPriceKgs = Math.round(car.priceUsd * KGS_RATE).toLocaleString('ru-RU');
+  const formattedSourcePriceUsd = car.sourcePriceUsd.toLocaleString('ru-RU');
   const formattedMileage = car.mileageKm.toLocaleString('ru-RU');
   const engineLabel = car.engineCc > 0 ? `${(car.engineCc / 1000).toFixed(1)} л` : 'EV';
+  const sourcePriceLabel =
+    car.country === 'Южная Корея' ? 'Цена в Корее' : `Цена (${car.country})`;
 
   const prevSlide = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -142,16 +142,19 @@ export const CarCard: React.FC<CarCardProps> = ({
             onClick={() => onSelect(car)}
             className="text-left min-w-0 flex-1"
           >
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <h3 className="text-xs sm:text-base font-bold text-slate-900 group-hover:text-[#0058cd] dark:text-white dark:group-hover:text-[#8fff00] truncate">
                 {car.brand} {car.model}
               </h3>
-              <span className="font-mono text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 shrink-0">
+              <span className="font-mono text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 shrink-0">
                 {car.year}
               </span>
+              <span className="rounded bg-[#0058cd]/10 px-1.5 py-0.5 text-[9px] sm:text-[11px] font-semibold text-[#0058cd] dark:bg-[#8fff00]/15 dark:text-[#8fff00] truncate max-w-[160px] sm:max-w-none">
+                {car.trim}
+              </span>
             </div>
-            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
-              {formattedMileage} км · {engineLabel} · {car.fuel} · {car.platform} ({car.country})
+            <p className="mt-1 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
+              {formattedMileage} км · {engineLabel} · {car.fuel} · {car.transmission} · {car.drive}
             </p>
             <div className="mt-1 sm:mt-2 flex flex-wrap gap-1.5">
               {car.labels.map((label) => (
@@ -167,11 +170,19 @@ export const CarCard: React.FC<CarCardProps> = ({
 
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <div className="text-right">
-              <div className="font-mono text-xs sm:text-base font-extrabold tabular-nums text-slate-900 dark:text-white">
-                ${formattedPriceUsd}
+              <div className="text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                {sourcePriceLabel}:{' '}
+                <span className="font-mono font-semibold tabular-nums text-slate-700 dark:text-slate-300">
+                  ${formattedSourcePriceUsd}
+                </span>
               </div>
-              <div className="font-mono text-[9px] sm:text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
-                ~ {formattedPriceKgs} сом
+              <div className="mt-0.5 flex items-baseline justify-end gap-1">
+                <span className="font-mono text-xs sm:text-base font-extrabold tabular-nums text-[#0058cd] dark:text-[#8fff00]">
+                  ${formattedPriceUsd}
+                </span>
+                <span className="text-[9px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  под ключ
+                </span>
               </div>
             </div>
             <button
@@ -307,49 +318,74 @@ export const CarCard: React.FC<CarCardProps> = ({
         </div>
       </div>
 
-      {/* Compact 4-line Info Block */}
+      {/* Info & Pricing Block */}
       <div className="flex flex-1 flex-col justify-between p-2 sm:p-3">
         <button
           type="button"
           onClick={() => onSelect(car)}
-          className="text-left focus-visible:outline-none"
+          className="text-left focus-visible:outline-none min-w-0"
         >
           <h3 className="text-xs sm:text-sm font-bold leading-snug text-slate-900 transition-colors group-hover:text-[#0058cd] dark:text-white dark:group-hover:text-[#8fff00] truncate">
             {car.brand} {car.model}
           </h3>
-          <div className="mt-0.5 font-mono text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">
-            {car.year}
+
+          <div className="mt-1 flex items-center gap-1.5 min-w-0">
+            <span className="font-mono text-[10px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300 shrink-0">
+              {car.year}
+            </span>
+            <span className="truncate rounded bg-[#0058cd]/10 px-1.5 py-0.5 text-[9px] sm:text-[11px] font-semibold text-[#0058cd] dark:bg-[#8fff00]/15 dark:text-[#8fff00]">
+              {car.trim}
+            </span>
           </div>
-          <div className="mt-0.5 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
+
+          <div className="mt-1 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
             <span className="font-mono tabular-nums">{formattedMileage} км</span> · {engineLabel} · {car.fuel}
+          </div>
+          <div className="mt-0.5 text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400 truncate">
+            {car.transmission} · {car.drive}
           </div>
         </button>
 
-        <div className="mt-1.5 sm:mt-2 flex items-center justify-between gap-1 sm:gap-2 pt-1">
+        <div className="mt-2 border-t border-slate-100 pt-1.5 sm:pt-2 dark:border-white/10">
           <button
             type="button"
             onClick={() => onSelect(car)}
-            className="text-left font-mono text-xs sm:text-sm font-extrabold tabular-nums text-slate-900 dark:text-white truncate"
+            className="flex w-full items-center justify-between gap-1 text-left text-[9px] sm:text-[11px] text-slate-500 dark:text-slate-400"
           >
-            ${formattedPriceUsd}{' '}
-            <span className="text-[9px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">
-              / {formattedPriceKgs} с.
+            <span className="truncate">{sourcePriceLabel}:</span>
+            <span className="font-mono font-semibold tabular-nums text-slate-700 dark:text-slate-300 shrink-0">
+              ${formattedSourcePriceUsd}
             </span>
           </button>
 
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleFavorite(car.id);
-            }}
-            aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
-            className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-[#0058cd] dark:hover:bg-white/5 dark:hover:text-[#8fff00]"
-          >
-            <Heart
-              className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isFavorite ? 'fill-[#0058cd] text-[#0058cd] dark:fill-[#8fff00] dark:text-[#8fff00]' : ''}`}
-            />
-          </button>
+          <div className="mt-0.5 flex items-center justify-between gap-1">
+            <button
+              type="button"
+              onClick={() => onSelect(car)}
+              className="flex min-w-0 items-baseline gap-1 sm:gap-1.5 text-left"
+            >
+              <span className="font-mono text-[13px] sm:text-base font-extrabold tabular-nums text-[#0058cd] dark:text-[#8fff00] shrink-0">
+                ${formattedPriceUsd}
+              </span>
+              <span className="text-[9px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300 truncate">
+                под ключ
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite(car.id);
+              }}
+              aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+              className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-[#0058cd] dark:hover:bg-white/5 dark:hover:text-[#8fff00]"
+            >
+              <Heart
+                className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isFavorite ? 'fill-[#0058cd] text-[#0058cd] dark:fill-[#8fff00] dark:text-[#8fff00]' : ''}`}
+              />
+            </button>
+          </div>
         </div>
       </div>
     </motion.article>
