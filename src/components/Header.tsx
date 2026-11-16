@@ -53,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
             src="/assets/aistudio/________________2026-11-15___20.34.30-removebg-preview_781c8d6b.png"
             alt="Trust Auto"
             referrerPolicy="no-referrer"
-            className="h-5 sm:h-6 md:h-7 lg:h-8 w-auto object-contain brightness-0 dark:brightness-100 transition-opacity hover:opacity-90"
+            className="w-[179.438px] h-[47.9896px] object-contain brightness-0 dark:brightness-100 transition-opacity hover:opacity-90"
           />
         </button>
 
